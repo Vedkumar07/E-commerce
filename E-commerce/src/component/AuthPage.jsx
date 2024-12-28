@@ -29,10 +29,8 @@ export function Signup(){
             console.log(result);
             setRegister(true);
             console.log(register);
-            cookies.set("TOKEN", result.data.token, {
-              path: "/",
-            });
-            window.location.href="/";
+            window.location.href="/auth";
+            console.log("Signin now");
           })
           .catch((error) => {
             console.log(error);
@@ -43,11 +41,7 @@ export function Signup(){
       ):(
         <p className="text-danger">Not Register</p>
       )}
-    // function handelSubmit(e) {
-    //     e.preventDefault();
-    //     alert("Submit");
-    // }
-        return (
+         return (
           <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -177,17 +171,20 @@ export function Signup(){
             const configration={
                 method:"post",
                 url:"http://localhost:30036/user/signin",
+                // headers:{
+                //   "Authorization": `Bearer ${token}`, // Pass the token in the header
+                //   "Content-Type": "application/json",
+                // },
                 data:{
-                    password,
-                    email
+                    email,
+                    password
                 },
             };
         axios(configration)
           .then((result) => {
             console.log(result);
-            cookies.set("TOKEN", result.data.token, {
-                path: "/",
-              });
+            document.cookie=`TOKEN=${result.data.token}`
+            //document.cookie='dark mode=true;path=/'
             setRegister(true);
             window.location.href="/";
           })

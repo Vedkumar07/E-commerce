@@ -23,15 +23,26 @@ const productSchema= new Schema({
 });
 const purchaseSchema=new Schema({//add reffrences
     creatorId:ObjectId,
-    ObjectId:ObjectId
+    userId:ObjectId
+},{
+    timestamps: true
 });
+const cartSchema=new Schema({
+    creatorId:ObjectId,
+    userId:ObjectId
+},{
+    timestamps: true
+})
+
 const userModel=mongoose.model("user",userSchema);
 const adminModel=mongoose.model("admin",adminSchema);
 const productModel=mongoose.model("product",productSchema);
 const purchaseModel=mongoose.model("purchase",purchaseSchema);
+const cartModel=mongoose.model("cart",cartSchema);
 module.exports={
     userModel,
     adminModel,
     productModel,
-    purchaseModel
+    purchaseModel,
+    cartModel
 }

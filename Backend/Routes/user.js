@@ -1,6 +1,6 @@
 const {Router}= require ("express");
 const userRouter=Router();
-const {userModel}=require("../db");
+const {userModel, cartModel}=require("../db");
 const {purchaseModel}=require("../db")
 const bcrypt=require("bcrypt");
 const {z}=require("zod")
@@ -71,14 +71,74 @@ userRouter.post('/signin',async (req,res)=>{
 })
 userRouter.get('/purchases',userMiddleware,async (req,res)=>{
     const creatorId=req.userId;
-    const courses=await purchaseModel.find({
-        creatorId
-});
-const courseData=await productModel.find({
-    _id:{$in:courses.map(x=>x.courseId)}
+//     const courses=await purchaseModel.find({
+//         creatorId
+// });
+const courseData=await purchaseModel.find({
+    creatorId:{$in:creatorId}
 })
     res.json({
         courseData
+    })
+})
+userRouter.post('/addTocart',userMiddleware,async (req,res)=>{
+    // const adminId=req.userId;
+    // const {title,description,price,creatorId,ObjectId}=req.body;
+    // const data=await purchaseModel.create({
+    //     title:title,
+    //     description:description,
+    //     price:price,
+    //     creatorId:adminId,
+    //     ObjectId:ObjectId
+    // })
+    // res.json({
+    //     message:"You sucefully bought the course",
+    //     data
+    // })
+    const creatorId=req.userId;
+    const userId=req.body.courseId;
+    await cartModel.create({
+       creatorId,
+       userId
+    })
+    res.json({
+        message:"You bought"
+    })
+})
+userRouter.get('/cart',userMiddleware,async(req,res)=>{
+    const creatorId=req.userId;
+//     const courses=await purchaseModel.find({
+//         creatorId
+// });
+const courseData=await cartModel.find({
+    creatorId:{$in:creatorId}
+})
+    res.json({
+        courseData
+    })
+})  
+userRouter.post('/buy',userMiddleware,async (req,res)=>{
+    // const adminId=req.userId;
+    // const {title,description,price,creatorId,ObjectId}=req.body;
+    // const data=await purchaseModel.create({
+    //     title:title,
+    //     description:description,
+    //     price:price,
+    //     creatorId:adminId,
+    //     ObjectId:ObjectId
+    // })
+    // res.json({
+    //     message:"You sucefully bought the course",
+    //     data
+    // })
+    const creatorId=req.userId;
+    const userId=req.body.courseId;
+    await purchaseModel.create({
+       creatorId,
+       userId
+    })
+    res.json({
+        message:"You bought"
     })
 })
 module.exports={
@@ -88,3 +148,8 @@ module.exports={
 //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTQ5OTMyMmRiNjZhYzU2ODFjMTVlYSIsImlhdCI6MTczMzkxNzQ2N30.b94VhndJReTxC6FDZDG3CqxoVT9rfGVLVfhPZYqkE-I"
 //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTk3ZGQ1YTYxMDliMTc3NWUwMzQyMiIsImlhdCI6MTczMzkxODIyOH0.a95-Gp3fCn0qkZsaLT5tla1EVxNJYTo3Pnde39YA4IY"
 //"67597f4fa6109b1775e03425"
+
+
+
+
+///

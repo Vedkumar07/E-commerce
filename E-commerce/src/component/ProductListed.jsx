@@ -1,27 +1,32 @@
-import {  useContext, useEffect,useState } from "react";
-import axios from "axios";
-import { CookieContext } from "./CookieInstance";
+import {  useEffect,useState } from "react";
 export function ProductListed(){
-    const {token}=useContext(CookieContext);
-    const[message,setMessage]=useState("");
+    const[message,setMessage]=useState([]);
     useEffect(()=>{
-        const configration={
-            method:"get",
-            url:"http://localhost:30036/admin/course/bulk",
-            header:{
-                Authorization:`Bearer ${token}`,
-            },
-        };
-
-        axios(configration)
-      .then((result)=>{
-        setMessage(result.data.message)
+      const token=document.cookie.split("=")[1];
+      console.log('TOKEN:', token);
+      fetch('http://localhost:30036/admin/course/bulk',{
+        method:"get",
+        headers:{
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       })
-      .catch((error)=>{
-        error=new Error();
-      });
-    },[]);
+        .then((res)=>{ res.json()})
+        .then((res)=>{
+          console.log(res.courseData);
+          setMessage(Array.isArray(res.courseData)?res.courseData:[res.courseData]);
+        })
+        .catch((error)=>{
+          console.error("Error fetching data:", error);
+        })
+    },[])
     return<div>
-        {message} hi
+        {message.map((e,index)=>{
+         return <div key={index}>
+            <div>{e.title}</div>
+            <div>{e.description}</div>
+            <div>{e.price}</div>
+          </div>
+        })}
     </div>
 }

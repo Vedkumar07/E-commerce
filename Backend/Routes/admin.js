@@ -104,14 +104,14 @@ createAdmin.put('/purchases',amdminMiddleware,async (req,res)=>{
     })
 })
 createAdmin.get('/course/bulk',amdminMiddleware,async (req,res)=>{
-    const adminId=req.userId;
-    const course=await productModel.find({
-        creatorId:adminId
-    });
+    const creatorId=req.userId;
+    const courseData=await productModel.find({
+        creatorId:{$in:creatorId}
+    },{})
+    console.log(courseData)
     res.json({
-        message:"Course Update",
-        course
-    })
+         
+    })  
 })
 module.exports={
     createAdmin:createAdmin

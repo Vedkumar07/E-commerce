@@ -1,7 +1,9 @@
 import axios from "axios";
 import {useState } from "react";
 import { useNavigate} from "react-router-dom";
-import { cookiesInstance } from "./CookieInstance";
+//import { cookiesInstance } from "./CookieInstance";
+import Cookies from "universal-cookie";
+export const cookiesInstance=new Cookies();
 export function Signup(){
     const [email,setEmail]=useState("");
     const[password,setPassword]=useState("");
@@ -26,9 +28,6 @@ export function Signup(){
              console.log(result);
              setRegister(true);
              console.log(register)
-             cookiesInstance.set("TOKEN",result.data.token,{
-              path:"/Buisness"
-          });
              navigate("/buisnessauth");
           })
           .catch((error)=>{
@@ -174,9 +173,7 @@ export function Signin(){
         axios(configration)
           .then((result)=>{
             console.log(result)
-            cookiesInstance.set("TOKEN",result.data.token,{
-                path:"/Buisness"
-            });
+            document.cookie=`TOKEN=${result.data.token}`
             setRegister(true);
             navigate('/Buisness');
         }

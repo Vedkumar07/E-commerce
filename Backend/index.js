@@ -17,11 +17,12 @@ const corsOptions = {
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
-//app.options('*', cors(corsOptions));
-app.get('*', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
+//app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from 'public' directory
 app.use(express.json());
+//app.options('*', cors(corsOptions));
+// app.get('*', function(req, res){
+//   res.sendFile(__dirname + '/index.html');
+// });
 app.use('/user', userRouter);
 app.use('/product', productRoute);
 app.use('/admin', createAdmin);

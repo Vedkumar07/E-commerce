@@ -1,5 +1,6 @@
-export function LandingPage(){
+import { FrontPage } from "../component/LandingPage"
+export function HomePage(){
     return<div>
-        Landing
+        <FrontPage />
     </div>
 }

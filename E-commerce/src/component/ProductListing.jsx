@@ -1,9 +1,7 @@
-import { useContext, useState } from "react";
-import axios from "axios";
-import { CookieContext } from "./CookieInstance";
+import { useState } from "react";
 
 export function ProductListing() {
-  const { token } = useContext(CookieContext) ; // Fallback if context is undefined
+  const token = document.cookie.split("=")[1];
   console.log(token);
 
   const [title, setTitle] = useState("");
@@ -12,45 +10,44 @@ export function ProductListing() {
   const [imgURL, setImgURL] = useState("");
   const [register, setRegister] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+  const handleClick = async (e) => {
+    const token = document.cookie.split("=")[1];
+    console.log(token);
+    e.preventDefault(); // Prevent form submission
 
-    if (!token) {
-      console.error("Token is not available.");
-      return;
-    }
-
-    const configuration = {
-      method: "post",
-      url: "http://localhost:30036/admin/product", // Ensure the endpoint is correct
+    // Sending the POST request to create the product
+    await fetch("http://localhost:30036/admin/product", {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
       },
-      data: {
+      body: JSON.stringify({
         title,
         description,
         price,
-        imgURL,
-        creatorId: token, // Adjust the `creatorId` as per the API requirements
-      },
-    };
-
-    axios(configuration)
-      .then((result) => {
-        console.log(result);
-        setRegister(true);
-        window.location.href = "/ProductListed"; // Navigate after successful registration
+        imgURL
+      })
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        if (res.success) { // Assuming the API returns a success field
+          setRegister(true); // Set register to true upon successful registration
+        } else {
+          setRegister(false); // Handle error case if needed
+        }
       })
       .catch((error) => {
-        console.error("Error while creating product:", error);
+        console.log(error);
+        setRegister(false); // Handle error case
       });
   };
 
   return (
     <>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6">
           <div>
             <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">
               Title
@@ -125,6 +122,7 @@ export function ProductListing() {
 
           <div>
             <button
+              onClick={handleClick} // Pass the event here
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
